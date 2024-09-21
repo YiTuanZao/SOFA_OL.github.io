@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOFA评分计算器</title>
+    <link rel="stylesheet" type="text/css" href="CSS/style.css"/>
     <style>
         h1 {
             text-align: center;
@@ -16,10 +17,16 @@
         th, td {
             padding: 10px;
             text-align: center;
-            border: 1px solid #ccc;
+            border: 1px solid #181818;
         }
+
+        
     </style>
-    
+
+
+
+  
+
     
     <script>
         function calculateScore() {
@@ -33,19 +40,29 @@
                 'F': [0, 1, 2, 3, 4],
                 'G': [0, 1, 2, 3, 4]
             };
-
+    
             for (let key in scoreMapping) {
-                const checkboxs = document.getElementsByName(key);
-                for (let checkbox of checkboxs) {
-                    if (checkbox.checked) {
-                        
-                        totalScore += parseInt(checkbox.value[0]); // 取值的第一个字符并转为整数
+                const radios = document.getElementsByName(key);
+                let selected0 = false;
+                for (let radio of radios) {
+                    if (radio.checked) {
+                        selected0 = true;
+                        totalScore += parseInt(radio.value[0]); // 取值的第一个字符并转为整数
                     }
                 }
-            }
-
-          
+                const statusElement = document.getElementById(key + 'Status');
+                if (selected0) {
+                    statusElement.innerText = '已选择';
+                    statusElement.style.color = "green";
+                }
+    }
+            
             document.getElementById("totalScore").innerText = "总分: " + totalScore;
+            
+            
+            
+         
+
         }
     </script>
     
@@ -60,24 +77,206 @@
             };
 
             for (let key in scoreMapping) {
-                const checkboxs = document.getElementsByName(key);
-                for (let checkbox of checkboxs) {
-                    if (checkbox.checked) {
-                        
-                        zhishu += parseInt(checkbox.value[0]); // 取值的第一个字符并转为整数
+                const radios = document.getElementsByName(key);
+                let selected = false;
+                for (let radio of radios) {
+                    if (radio.checked) {
+                        selected = true;
+                        zhishu += parseInt(radio.value[0]); // 取值的第一个字符并转为整数
                     }
                 }
+            
+            const statusElement = document.getElementById(key + 'Status');
+                if (selected) {
+                    statusElement.innerText = '已选择';
+                    statusElement.style.color = "green";
+                } 
             }
-
           
             document.getElementById("zhishu").innerText = "GCS总分: " + zhishu;
+
+            autoSelectHealthIndex(zhishu);
+
         }
+        function autoSelectHealthIndex(zhishu) {
+        // 清除之前的选择
+        const healthRadios = document.getElementsByName("E");
+        healthRadios.forEach(radio => radio.checked = false);
+
+        // 根据GCS总分勾选相应的健康指数选项
+        if (zhishu === 15) {
+            document.querySelector('input[name="E"][value="0"]').checked = true;
+
+        } else if (zhishu >= 13 && zhishu <= 14) {
+            document.querySelector('input[name="E"][value="1"]').checked = true;
+
+        } else if (zhishu >= 10 && zhishu <= 12) {
+            document.querySelector('input[name="E"][value="2"]').checked = true;
+
+        } else if (zhishu >= 6 && zhishu <= 9) {
+            document.querySelector('input[name="E"][value="3"]').checked = true;
+
+        } else if (zhishu < 6) {
+            document.querySelector('input[name="E"][value="4"]').checked = true;
+            
+        }
+        calculateScore();
+    }
     </script>
-    
+ 
+
+
+
+
+
+
+
+
 
 
 
 <body>
+
+    <div class="container">
+        <h1>Glasgow昏迷量表(GCS)</h1>
+        <style>
+            h1 {
+              text-align: center;
+            }
+          </style>
+       
+       <table>
+        <thead>
+            <table id="gcsTable" style="font-size: 20px;">
+                <tr style="background-color: #6f6969; color: rgb(252, 249, 249);"> 
+                <th>系统</th>
+                <th>  </th>
+                <th>6分</th>
+                <th>5分</th>
+                <th>4分</th>
+                <th>3分</th>
+                <th>2分</th>
+                <th>1分</th>
+                <th>选择情况</th>
+            </tr>
+            
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="3" style="background-color: #d3d3d3;">格拉斯哥昏迷量表（E）</td> 
+                <td rowspan="5">睁眼反应（单选）</td>
+                <td> </td>
+                <td> </td>
+
+                <td>
+                    <input type="radio" name="E1" value="4" onclick="count()"> 自动睁眼 <br>
+                </td>
+                <td>
+                    <input type="radio" name="E1" value="3" onclick="count()"> 呼唤睁眼 <br>
+                </td>
+                <td>
+                    <input type="radio" name="E1" value="2" onclick="count()"> 刺疼睁眼 <br>
+                </td>
+                <td>
+                    <input type="radio" name="E1" value="1" onclick="count()"> 不能睁眼 <br>
+                </td>
+
+
+                <td id="E1Status" style="color: red;">此项必选</td>
+
+
+            </tr>
+           
+           
+        </tbody>
+    </thead>
+
+
+    <tbody>
+        <tr>
+            <td rowspan="7" style="background-color: #d3d3d3;">格拉斯哥昏迷量表(V)</td>
+            <td rowspan="7">言语反应（单选）</td>
+            <td rowspan="5"></td>
+            
+            <td>
+                <input type="radio" name="E2" value="5" onclick="count()"> 回答切题 <br>
+            </td>
+            <td>
+                <input type="radio" name="E2" value="4" onclick="count()">  回答不切题 <br>
+            </td>
+            <td>
+                <input type="radio" name="E2" value="3" onclick="count()"> 答非所问 <br>
+            </td>
+            <td>
+                <input type="radio" name="E2" value="2" onclick="count()">只能发音 <br>
+            </td>
+            <td>
+                <input type="radio" name="E2" value="1" onclick="count()">不能言语 <br>
+            </td>
+                
+            <td id="E2Status" style="color: red;">此项必选</td>
+
+
+
+
+
+            </tr>
+
+
+      
+
+
+    </tbody>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="6" style="background-color: #d3d3d3;">格拉斯哥昏迷量表(M)</td>
+            <td rowspan="6">运动反应（单选）</td>
+            <td>
+                <input type="radio" name="E3" value="6" onclick="count()"> 按吩咐动作 <br>
+            </td>
+            <td>
+                <input type="radio" name="E3" value="5" onclick="count()">  剌疼能定位 <br>
+            </td>
+            <td>
+                <input type="radio" name="E3" value="4" onclick="count()"> 刺疼能躲避 <br>
+            </td>
+            <td>
+                <input type="radio" name="E3" value="3" onclick="count()">刺肢体屈曲 <br>
+            </td>
+            <td>
+                <input type="radio" name="E3" value="2" onclick="count()">刺肢体伸展 <br>
+            </td>
+            <td>
+                <input type="radio" name="E3" value="1" onclick="count()">不能活动 <br>
+            </td> 
+
+
+           <td id="E3Status" style="color: red;">此项必选</td>
+
+
+
+
+
+    </tbody>
+    </thead>
+    
+    
+    
+    </thead>
+    
+    </table>
+    
+    
+        
+        <h2 id="zhishu">GCS总分: 0</h2>
+    </div>
+
+
+
+
+
+
   
     <div class="container">
         <h1>SOFA评分计算器</h1>
@@ -87,16 +286,17 @@
             }
           </style>
        
-        <table border="1">
+        <table border="1" style="font-size: 20px;">
             <thead>
                 <tr>
-                    <th>系统</th>
+                    <th style="background-color: #d3d3d3;">系统</th>
                     <th>相关指标</th>
                     <th>0分</th>
                     <th>1分</th>
                     <th>2分</th>
                     <th>3分</th>
                     <th>4分</th>
+                    <th>选择情况</th>
                 </tr>
             </thead>
             <tbody>
@@ -104,30 +304,31 @@
                     <td>呼吸系统</td>
                     <td>PaO₂/FiO₂/mmHg(kPa)</td>
                     <td>
-                        <input type="checkbox" name="A" value="0" onclick="calculateScore()"> >=400
+                        <input type="radio" name="A" value="0" onclick="calculateScore()"> >=400
                         (53.3)<br>
                         
                     </td>
                     <td>
-                        <input type="checkbox" name="A" value="1" onclick="calculateScore()" > <400
+                        <input type="radio" name="A" value="1" onclick="calculateScore()" > <400
                         (53.3) <br>
                         
                     </td>
                     <td>
-                        <input type="checkbox" name="A" value="2" onclick="calculateScore()" > <300
+                        <input type="radio" name="A" value="2" onclick="calculateScore()" > <300
                         (40.0) <br>
                         
                     </td>
                     <td>
-                        <input type="checkbox" name="A" value="3" onclick="calculateScore()" > <200(26.7)十
+                        <input type="radio" name="A" value="3" onclick="calculateScore()" > <200(26.7) +
                         机械通气 <br>
                         
                     </td>
                     <td>
-                        <input type="checkbox" name="A" value="4" onclick="calculateScore()" > <100(13.3)十
+                        <input type="radio" name="A" value="4" onclick="calculateScore()" > <100(13.3) +
                         机械通气 <br>
                         
                     </td>
+                    <td id="AStatus" style="color: red;">此项必选</td>
                 </tr>
             </tbody>
         </thead>
@@ -136,26 +337,29 @@
                 <td>凝血系统</td>
                 <td>血小板/(10^3/μL)凝血系统</td>
                 <td>
-                    <input type="checkbox" name="B" value="0" onclick="calculateScore()" > >=150<br>
+                    <input type="radio" name="B" value="0" onclick="calculateScore()" > >=150<br>
                     
                 </td>
                 <td>
-                    <input type="checkbox" name="B" value="1" onclick="calculateScore()" > <150 <br>
+                    <input type="radio" name="B" value="1" onclick="calculateScore()" > <150 <br>
                     
                 </td>
                 <td>
-                    <input type="checkbox" name="B" value="2" onclick="calculateScore()" > <100 <br>
+                    <input type="radio" name="B" value="2" onclick="calculateScore()" > <100 <br>
                     
                 </td>
                 <td>
-                    <input type="checkbox" name="B" value="3" onclick="calculateScore()" > <50 <br>
+                    <input type="radio" name="B" value="3" onclick="calculateScore()" > <50 <br>
                     
                 </td>
                 <td>
-                    <input type="checkbox" name="B" value="4" onclick="calculateScore()" > <20 <br>
+                    <input type="radio" name="B" value="4" onclick="calculateScore()" > <20 <br>
                     
                 </td>
+                <td id="BStatus" style="color: red;">此项必选</td>
+
             </tr>
+            
         </tbody>
     </thead>
     <tbody>
@@ -163,25 +367,26 @@
             <td>肝脏</td>
             <td>胆红素/[mg/dl(μmol/L)(肝脏)</td>
             <td>
-                <input type="checkbox" name="C" value="0" onclick="calculateScore()" > <1.2(20) <br>
+                <input type="radio" name="C" value="0" onclick="calculateScore()" > <1.2(20) <br>
                 
             </td>
             <td>
-                <input type="checkbox" name="C" value="1" onclick="calculateScore()" > 1.2~1.9(20~32)<br>
+                <input type="radio" name="C" value="1" onclick="calculateScore()" > 1.2~1.9(20~32)<br>
                 
             </td>
             <td>
-                <input type="checkbox" name="C" value="2" onclick="calculateScore()" > 2.0~5.9(33~101)<br>
+                <input type="radio" name="C" value="2" onclick="calculateScore()" > 2.0~5.9(33~101)<br>
                 
             </td>
             <td>
-                <input type="checkbox" name="C" value="3" onclick="calculateScore()" > <6.0~11.9(102~204) <br>
+                <input type="radio" name="C" value="3" onclick="calculateScore()" > <6.0~11.9(102~204) <br>
                 
             </td>
             <td>
-                <input type="checkbox" name="C" value="4" onclick="calculateScore()" > >=12.0(204) <br>
+                <input type="radio" name="C" value="4" onclick="calculateScore()" > >=12.0(204) <br>
                 
             </td>
+            <td id="CStatus" style="color: red;">此项必选</td>
         </tr>
     </tbody>
 </thead>
@@ -190,57 +395,59 @@
         <td>心血管系统</td>
         <td>相关物质含量</td>
         <td>
-            <input type="checkbox" name="D" value="0" onclick="calculateScore()" > MAP>=70 mmHg <br>
+            <input type="radio" name="D" value="0" onclick="calculateScore()" > MAP>=70 mmHg <br>
             
         </td>
         <td>
-            <input type="checkbox" name="D" value="1" onclick="calculateScore()" > MAP<70 mmHg <br>
+            <input type="radio" name="D" value="1" onclick="calculateScore()" > MAP<70 mmHg <br>
             
         </td>
         <td>
-            <input type="checkbox" name="D" value="2" onclick="calculateScore()" > 多巴胺<5
+            <input type="radio" name="D" value="2" onclick="calculateScore()" > 多巴胺<5
             或多巴酚丁胺
             (任何剂量) <br>
             
         </td>
         <td>
-            <input type="checkbox" name="D" value="3" onclick="calculateScore()" >多巴胺 5.1~15.0 或肾上腺素<0.1或去甲肾上腺素>0.1<br>
+            <input type="radio" name="D" value="3" onclick="calculateScore()" >多巴胺 5.1~15.0 或肾上腺素<0.1或去甲肾上腺素>0.1<br>
             
         </td>
         <td>
-            <input type="checkbox" name="D" value="4" onclick="calculateScore()" > 多巴胺>15 或肾上腺素>0.1或去甲肾上腺素>0.11<br>
+            <input type="radio" name="D" value="4" onclick="calculateScore()" > 多巴胺>15 或肾上腺素>0.1或去甲肾上腺素>0.11<br>
             
         </td>
+        <td id="DStatus" style="color: red;">此项必选</td>
     </tr>
 </tbody>
 </thead>
-<td>中枢神经系统(详见下表)</td>
+<td>中枢神经系统(详见上表)</td>
         <td>Glasgow昏迷量表评分/分</td>
         <td>
             
-            <input type="checkbox" name="E" value="0" onclick="calculateScore()" > 15<br>
+            <input type="radio" name="E" value="0" onclick="calculateScore()" > 15<br>
             
         </td>
         <td>
            
-            <input type="checkbox" name="E" value="1" onclick="calculateScore()" > 13~14<br>
+            <input type="radio" name="E" value="1" onclick="calculateScore()" > 13~14<br>
             
         </td>
         <td>
            
-            <input type="checkbox" name="E" value="2" onclick="calculateScore()" > 10~12<br>
+            <input type="radio" name="E" value="2" onclick="calculateScore()" > 10~12<br>
             
         </td>
         <td>
             
-            <input type="checkbox" name="E" value="3" onclick="calculateScore()" > 6~9<br>
+            <input type="radio" name="E" value="3" onclick="calculateScore()" > 6~9<br>
             
         </td>
         <td>
             
-            <input type="checkbox" name="E" value="4" onclick="calculateScore()" > <6 <br>
+            <input type="radio" name="E" value="4" onclick="calculateScore()" > <6 <br>
             
         </td>
+        <td id="EStatus" style="color: red;">此项必选</td>
     </tr>
 </thead>
 <tbody>
@@ -248,25 +455,26 @@
         <td rowspan="2">肾脏</td> <!-- Merge the cells for "肾脏" -->
         <td>肌酐/[mg/dl(μmol/L)</td>
         <td>
-            <input type="checkbox" name="F" value="0" onclick="calculateScore()" > <1.2(110) <br>
+            <input type="radio" name="F" value="0" onclick="calculateScore()" > <1.2(110) <br>
             
         </td>
         <td>
-            <input type="checkbox" name="F" value="1" onclick="calculateScore()" > 1.2~1.9(110~170) <br>
+            <input type="radio" name="F" value="1" onclick="calculateScore()" > 1.2~1.9(110~170) <br>
             
         </td>
         <td>
-            <input type="checkbox" name="F" value="2" onclick="calculateScore()" > 2.0~3.4(171~299)<br>
+            <input type="radio" name="F" value="2" onclick="calculateScore()" > 2.0~3.4(171~299)<br>
             
         </td>
         <td>
-            <input type="checkbox" name="F" value="3" onclick="calculateScore()" > 3.5~4.9(300~440)<br>
+            <input type="radio" name="F" value="3" onclick="calculateScore()" > 3.5~4.9(300~440)<br>
             
         </td>
         <td>
-            <input type="checkbox" name="F" value="4" onclick="calculateScore()" > >4.9(440) <br>
+            <input type="radio" name="F" value="4" onclick="calculateScore()" > >4.9(440) <br>
             
         </td>
+        <td id="FStatus" style="color: red;">此项必选</td>
     </tr>
     <tr>
         <td>尿量/(ml/d)</td>
@@ -283,13 +491,14 @@
             
         </td>
         <td>
-            <input type="checkbox" name="G" value="3" onclick="calculateScore()" > <500 <br>
+            <input type="radio" name="G" value="3" onclick="calculateScore()" > <500 <br>
             
         </td>
         <td>
-            <input type="checkbox" name="G" value="4" onclick="calculateScore()" > <200 <br>
+            <input type="radio" name="G" value="4" onclick="calculateScore()" > <200 <br>
             
         </td>
+        <td id="GStatus" style="color: red;">此项必选</td>
     </tr>
 </tbody>
         
@@ -300,190 +509,61 @@
     </div>
 
 
-    <div class="container">
-        <h1>Glasgow昏迷量表(GCS)</h1>
-        <style>
-            h1 {
-              text-align: center;
-            }
-          </style>
-       
-       <table>
-        <thead>
-            <tr>
-                <th>系统</th>
-                <th>项目</th>
-                <th>刺激</th>
-                <th>患者反应</th>
-                <th>评分</th>
-            </tr>
-            
-        </thead>
-        <tbody>
-            <tr>
-                <td rowspan="5">格拉斯哥昏迷量表（E）</td>
-                <td rowspan="5">睁眼（单选）</td>
-                <td>自发</td>
-                <td>
-                    自己睁眼
-                </td>
-                <td>
-                    <input type="checkbox" name="E1" value="4" onclick="count()"> 4分<br>
-                </td>
-            </tr>
-            <tr>
-                
-                <td>语言</td>
-                <td>
-                    呼叫时睁眼
-                </td>
-                <td><input type="checkbox" name="E1" value="3" onclick="count()"> 3分<br></td>
-            </tr>
-            <tr>
-                
-                <td rowspan="2">疼痛</td>
-                <td>
-                   疼痛刺激时睁眼
-                </td>
-                <td><input type="checkbox" name="E1" value="2" onclick="count()"> 2分<br></td>
-            </tr>
-            <tr>
-                
-    
-                <td>
-                     任何刺激不睁眼
-                </td>
-                <td><input type="checkbox" name="E1" value="1" onclick="count()"> 1分<br></td>
-            </tr>
-    
-            <tr>
-                <td>“C”(closed)</td>
-                <td>
-                    如因眼肿、骨折等不能睁眼，应以“C”(closed)表示
-                </td>
-                <td>C分</td>
-            </tr>
-        </tbody>
-    </thead>
-    <tbody>
-        <tr>
-            <td rowspan="7">格拉斯哥昏迷量表(V)</td>
-            <td rowspan="7">言语反应（单选）</td>
-            <td rowspan="5">语言</td>
-            <td>
-               能正确会话
-            </td>
-            <td><input type="checkbox" name="E2" value="5" onclick="count()"> 5分<br></td>
-        </tr>
-        <tr>
-            
-            
-            <td>
-                 语言错乱，定向障碍
-            </td>
-            <td><input type="checkbox" name="E2" value="4" onclick="count()"> 4分<br></td>
-        </tr>
-        <tr>
-            
-            
-            <td>
-                说话能被理解，但无意义
-            </td>
-            <td><input type="checkbox" name="E2" value="3" onclick="count()"> 3分<br></td>
-        </tr>
-        <tr>
-            
-           
-            <td>
-                能发出声音，但不能被理解
-            </td>
-            <td><input type="checkbox" name="E2" value="2" onclick="count()"> 2分<br></td>
-        </tr>
-        <tr>
-            
-           
-            <td>
-                不发声
-            </td>
-            <td><input type="checkbox" name="E2" value="1" onclick="count()"> 1分<br></td>
-        </tr>
-        <tr>
-            <td>“T"(tube)</td>
-            <td>
-                因气管插管或切开而无法正常发声，以“T"(tube)表示
-            </td>
-            <td>T分</td>
-        </tr>
-        <tr>
-            <td>“D”(dysphasic)</td>
-            <td>
-                平素有言语障碍史，以“D”(dysphasic)表示
-            </td>
-            <td>D分</td>
-        </tr>
-    </tbody>
-    </thead>
-    <tbody>
-        <tr>
-            <td rowspan="6">格拉斯哥昏迷量表(M)</td>
-            <td rowspan="6">运动反应（单选）</td>
-            <td>口令</td>
-            <td>
-               能执行简单的命令
-            </td>
-            <td><input type="checkbox" name="E3" value="6" onclick="count()"> 6分<br></td>
-        </tr>
-        <td rowspan="5">疼痛</td
-        <tr>
-            <td>
-                疼痛时能拨开医生的手
-            </td>
-            <td> <input type="checkbox" name="E3" value="5" onclick="count()"> 5分<br></td>
-        </tr>
-        <tr>
-            
-            
-            <td>
-                对疼痛刺激有反应，肢体会回缩
-            </td>
-            <td> <input type="checkbox" name="E3" value="4" onclick="count()"> 4分<br></td>
-        </tr>
-        <tr>
-            
-            
-            <td>
-                 对疼痛刺激有反应，肢体会弯曲，呈“去皮质强直"姿势
-            </td>
-            <td><input type="checkbox" name="E3" value="3" onclick="count()"> 3分<br></td>
-        </tr>
-        <tr>
-            
-            
-            <td>
-                对疼痛刺激有反应，肢体会伸直，呈“去大脑强直"姿势
-            </td>
-            <td> <input type="checkbox" name="E3" value="2" onclick="count()"> 2分<br></td>
-        </tr>
-        <tr>
-            
-            
-            <td>
-               对疼痛无任何反应
-            </td>
-            <td><input type="checkbox" name="E3" value="1" onclick="count()"> 1分<br></td>
-        </tr>
-    </tbody>
-    </thead>
-    
-    
-    
-    </thead>
-    
-    </table>
-    
-    
-        
-        <h2 id="zhishu">GCS总分: 0</h2>
-    </div>
+
+
+    <script>
+        // 调用函数来更新状态颜色
+        updateStatusColor();
+    </script>
+
+
+
+
+
+
+
+
+
+<button onclick="clearAll()" style="width: 250px; height: 50px;">重置所有选项</button>
+
+    <script>
+        function clearAll() {
+            // 清空GCS表中的所有选项
+            const gcsRadios = document.querySelectorAll('input[type="radio"][name^="E"]');
+            gcsRadios.forEach(radio => radio.checked = false);
+            document.getElementById("zhishu").innerText = "GCS总分: 0"; // 重置GCS总分
+
+            // 清空健康指数计算表中的所有选项
+            const healthRadios = document.querySelectorAll('input[type="radio"][name="A"], input[type="radio"][name="B"], input[type="radio"][name="C"], input[type="radio"][name="D"], input[type="radio"][name="E"], input[type="radio"][name="F"], input[type="radio"][name="G"]');
+            healthRadios.forEach(radio => radio.checked = false);
+            document.getElementById("totalScore").innerText = "总分: 0"; // 重置健康指数总分
+
+          // 更新指定的td元素
+          const statuses = ["AStatus", "BStatus", "CStatus", "DStatus", "EStatus", "FStatus", "GStatus", "E1Status", "E2Status", "E3Status"];
+            statuses.forEach(id => {
+                const td = document.getElementById(id);
+                if (td) {
+                    td.style.color = "red"; // 设置文本颜色为红色
+                    td.innerText = "此项必选"; // 更新文本内容
+                }
+            });
+        }
+    </script>
+
+<div class="logo" style="text-align:  center;">
+
+<img src=" img\809-230106113606347.png " style="width: 150px; height: auto;"  />
+<img src="img\3046BE0BA17906D9657318DD0525EC00.jpg"  style="width: 150px; height: auto;" />
+<img src="img\D2F82536441EA715886C51A6237D7E81.jpg "  style="width: 150px; height: auto;" />
+<img src="img\3354400e99f55014680e1c124c3ca30d.jpg"  style="width: 150px; height: auto;" />   
+
+
+
+</div>
+
+
+
+
+
 </body>
 </html>
